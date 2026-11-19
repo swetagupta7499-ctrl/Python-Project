@@ -1,289 +1,128 @@
-LOG_FILE = "toolkit_results.txt"
+# PROJECT 8: NUMBER UTILITY TOOLKIT
+# Group 8: Rajesh Chaurasiya, Manas Dubey, Sweta, Pavan Kumar
 
-session_data = {
-    "group": "Group 8",
-    "members": ["Rajesh Chaurasiya", "Manas Dubey", "Sweta", "Pavan Kumar"],
-    "primes_found": set(),
-    "history": []
-}
+# Session data
+primes = []
+history = []
 
 
+# Check prime
 def is_prime(n):
-    """
-    >>> is_prime(7)
-    True
-    >>> is_prime(12)
-    False
-    >>> is_prime(1)
-    False
-    """
     if n < 2:
         return False
-
     for i in range(2, n):
         if n % i == 0:
             return False
-
     return True
 
 
+# Check palindrome
 def is_palindrome(n):
-    """
-    >>> is_palindrome(121)
-    True
-    >>> is_palindrome(123)
-    False
-    """
-    s = str(abs(n))
+    s = str(n)
     return s == s[::-1]
 
 
+# Check Armstrong
 def is_armstrong(n):
-    """
-    >>> is_armstrong(153)
-    True
-    >>> is_armstrong(123)
-    False
-    """
-    if n < 0:
-        return False
-
     s = str(n)
     total = 0
-
-    for digit in s:
-        total += int(digit) ** len(s)
-
+    for d in s:
+        total = total + int(d) ** len(s)
     return total == n
 
 
+# Check perfect number
 def is_perfect(n):
-    """
-    >>> is_perfect(6)
-    True
-    >>> is_perfect(10)
-    False
-    """
-    if n < 2:
+    if n < 1:
         return False
-
     total = 0
-
     for i in range(1, n):
         if n % i == 0:
-            total += i
-
+            total = total + i
     return total == n
 
 
-def check_number_properties(n):
-    """
-    >>> check_number_properties(6)
-    (False, True, True, True)
-    >>> check_number_properties(7)
-    (True, True, True, False)
-    """
-    prime = is_prime(n)
-    palindrome = is_palindrome(n)
-    armstrong = is_armstrong(n)
-    perfect = is_perfect(n)
-
-    if prime:
-        session_data["primes_found"].add(n)
-
-    return prime, palindrome, armstrong, perfect
-
-
-def digit_operations(n):
-    """
-    >>> digit_operations(1234)
-    (10, 4, 4321)
-    >>> digit_operations(508)
-    (13, 3, 805)
-    """
-    temp = abs(n)
+# Sum, count and reverse of digits
+def digit_ops(n):
     total = 0
     count = 0
-    reverse = 0
-
-    if temp == 0:
-        return 0, 1, 0
-
-    while temp > 0:
-        digit = temp % 10
-
-        total += digit
-        count += 1
-        reverse = reverse * 10 + digit
-
-        temp = temp // 10
-
-    if n < 0:
-        reverse = -reverse
-
-    return total, count, reverse
+    rev = 0
+    while n > 0:
+        d = n % 10
+        total = total + d
+        count = count + 1
+        rev = rev * 10 + d
+        n = n // 10
+    return total, count, rev
 
 
-def factorial_recursive(n):
-    """
-    >>> factorial_recursive(5)
-    120
-    >>> factorial_recursive(0)
-    1
-    """
-    if n < 0:
-        raise ValueError("Enter a non-negative number")
-
+# Factorial (recursion)
+def factorial(n):
     if n == 0 or n == 1:
         return 1
+    return n * factorial(n - 1)
 
-    return n * factorial_recursive(n - 1)
 
-
-def fibonacci_recursive(n):
-    """
-    >>> fibonacci_recursive(0)
-    0
-    >>> fibonacci_recursive(6)
-    8
-    """
-    if n < 0:
-        raise ValueError("Enter a non-negative number")
-
+# Fibonacci number (recursion)
+def fib(n):
     if n == 0:
         return 0
-
     if n == 1:
         return 1
+    return fib(n - 1) + fib(n - 2)
 
-    return fibonacci_recursive(n - 1) + fibonacci_recursive(n - 2)
+
+# GCD (recursion)
+def gcd(a, b):
+    if b == 0:
+        return a
+    return gcd(b, a % b)
 
 
-def get_fibonacci_series(terms):
-    """
-    >>> get_fibonacci_series(5)
-    [0, 1, 1, 2, 3]
-    >>> get_fibonacci_series(1)
-    [0]
-    """
-    if terms < 0:
-        raise ValueError("Enter a non-negative number")
-
+# Fibonacci series
+def fib_series(terms):
     series = []
-
     for i in range(terms):
-        series.append(fibonacci_recursive(i))
-
+        series.append(fib(i))
     return series
 
 
-def gcd_recursive(a, b):
-    """
-    >>> gcd_recursive(48, 18)
-    6
-    >>> gcd_recursive(15, 25)
-    5
-    """
-    a = abs(a)
-    b = abs(b)
-
-    if b == 0:
-        return a
-
-    return gcd_recursive(b, a % b)
+# Prime numbers up to N
+def primes_upto(n):
+    result = []
+    for i in range(2, n + 1):
+        if is_prime(i):
+            result.append(i)
+            if i not in primes:
+                primes.append(i)
+    return result
 
 
-def gcd_and_lcm(a, b):
-    """
-    >>> gcd_and_lcm(12, 18)
-    (6, 36)
-    >>> gcd_and_lcm(7, 5)
-    (1, 35)
-    """
-    g = gcd_recursive(a, b)
-
-    if a == 0 or b == 0:
-        return g, 0
-
-    lcm = abs(a * b) // g
-
-    return g, lcm
-
-
-def primes_up_to_n(n):
-    """
-    >>> primes_up_to_n(10)
-    [2, 3, 5, 7]
-    >>> primes_up_to_n(20)
-    [2, 3, 5, 7, 11, 13, 17, 19]
-    """
-    primes = set()
-
-    for num in range(2, n + 1):
-        prime = True
-
-        for i in range(2, num):
-            if num % i == 0:
-                prime = False
-                break
-
-        if prime:
-            primes.add(num)
-            session_data["primes_found"].add(num)
-
-    return sorted(primes)
-
-
-def generate_multiplication_tables(start, end):
-    """
-    >>> len(generate_multiplication_tables(2, 3))
-    20
-    >>> generate_multiplication_tables(2, 2)[0]
-    '2 x 1 = 2'
-    """
-    lines = []
-
+# Multiplication tables
+def print_tables(start, end):
     for num in range(start, end + 1):
         for i in range(1, 11):
-            lines.append(f"{num} x {i} = {num * i}")
-
-    return lines
-
-
-def save_result_to_file(operation, input_val, result):
-    """
-    >>> save_result_to_file("Test", 5, "Success")
-    True
-    """
-    run = len(session_data["history"]) + 1
-
-    record = {
-        "run": run,
-        "operation": operation,
-        "input": input_val,
-        "result": result
-    }
-
-    session_data["history"].append(record)
-
-    file = open(LOG_FILE, "a")
-    file.write(str(record) + "\n")
-    file.close()
-
-    return True
+            print(num, "x", i, "=", num * i)
+        print("--------------------")
 
 
-print("=" * 50)
+# Save result in file
+def save(operation, inp, result):
+    text = operation + " | Input: " + str(inp) + " | Result: " + str(result)
+    history.append(text)
+    f = open("results.txt", "a")
+    f.write(text + "\n")
+    f.close()
+
+
+# Main program
 print("PROJECT 8: NUMBER UTILITY TOOLKIT")
-print("Group:", session_data["group"])
-print("Members:", ", ".join(session_data["members"]))
-print("=" * 50)
-
+print("Group 8: Rajesh Chaurasiya, Manas Dubey, Sweta, Pavan Kumar")
 
 while True:
-
+    # Menu
     print("\n--- MAIN MENU ---")
-    print("1. Check Prime, Palindrome, Armstrong or Perfect")
+    print("1. Check Prime, Palindrome, Armstrong, Perfect")
     print("2. Sum, Count and Reverse of Digits")
     print("3. Fibonacci Series and Factorial")
     print("4. GCD and LCM")
@@ -292,101 +131,80 @@ while True:
     print("7. View Session Data")
     print("8. Exit")
 
-    choice = input("\nEnter your choice (1-8): ")
+    choice = input("Enter your choice (1-8): ")
 
     try:
-
+        # Option 1: Number checks
         if choice == "1":
-            n = int(input("Enter an integer: "))
+            n = int(input("Enter a positive integer: "))
+            p = is_prime(n)
+            result = (p, is_palindrome(n), is_armstrong(n), is_perfect(n))
+            if p and n not in primes:
+                primes.append(n)
+            print("Prime, Palindrome, Armstrong, Perfect:", result)
+            save("Number Check", n, result)
 
-            result = check_number_properties(n)
-
-            print("Prime, Palindrome, Armstrong, Perfect:")
-            print(result)
-
-            save_result_to_file("Number Check", n, result)
-
+        # Option 2: Digit operations
         elif choice == "2":
-            n = int(input("Enter an integer: "))
-
-            result = digit_operations(n)
-
+            n = int(input("Enter a positive integer: "))
+            result = digit_ops(n)
             print("Sum, Count, Reverse:", result)
+            save("Digit Operations", n, result)
 
-            save_result_to_file("Digit Operations", n, result)
-
+        # Option 3: Fibonacci and factorial
         elif choice == "3":
             n = int(input("Enter a non-negative integer: "))
+            if n < 0:
+                print("Number must not be negative.")
+            else:
+                series = fib_series(n)
+                fact = factorial(n)
+                print("Fibonacci Series:", series)
+                print("Factorial:", fact)
+                save("Fibonacci and Factorial", n, (series, fact))
 
-            fib = get_fibonacci_series(n)
-            fact = factorial_recursive(n)
-
-            print("Fibonacci Series:", fib)
-            print("Factorial:", fact)
-
-            save_result_to_file("Fibonacci and Factorial", n, (fib, fact))
-
+        # Option 4: GCD and LCM
         elif choice == "4":
             a = int(input("Enter first number: "))
             b = int(input("Enter second number: "))
+            g = gcd(a, b)
+            lcm = a * b // g
+            print("GCD:", g)
+            print("LCM:", lcm)
+            save("GCD and LCM", (a, b), (g, lcm))
 
-            result = gcd_and_lcm(a, b)
-
-            print("GCD and LCM:", result)
-
-            save_result_to_file("GCD and LCM", (a, b), result)
-
+        # Option 5: Primes up to N
         elif choice == "5":
             n = int(input("Enter N: "))
-
-            result = primes_up_to_n(n)
-
+            result = primes_upto(n)
             print("Prime Numbers:", result)
+            save("Prime Numbers", n, result)
 
-            save_result_to_file("Prime Numbers", n, result)
-
+        # Option 6: Multiplication tables
         elif choice == "6":
             start = int(input("Enter starting number: "))
             end = int(input("Enter ending number: "))
+            print_tables(start, end)
+            save("Multiplication Tables", (start, end), "Done")
 
-            if start > end:
-                start, end = end, start
-
-            lines = generate_multiplication_tables(start, end)
-
-            count = 0
-
-            for line in lines:
-                print(line)
-                count += 1
-
-                if count % 10 == 0:
-                    print("--------------------")
-
-            save_result_to_file("Multiplication Tables", (start, end), "Completed")
-
+        # Option 7: Session data
         elif choice == "7":
-            print("\n--- SESSION DATA ---")
-            print("Group:", session_data["group"])
-            print("Primes Found:", session_data["primes_found"])
-            print("Total Runs:", len(session_data["history"]))
+            print("Primes Found:", primes)
+            print("Total Runs:", len(history))
+            for h in history:
+                print(h)
 
-            for entry in session_data["history"]:
-                print(entry)
-
+        # Option 8: Exit
         elif choice == "8":
-            print("All results saved to", LOG_FILE)
+            print("All results are saved in results.txt")
             print("Goodbye!")
             break
 
         else:
             print("Invalid choice! Select 1 to 8.")
 
-    except ValueError as e:
-        print("Input Error:", e)
-
-    except RecursionError:
-        print("Number is too large.")
-
-    except IOError:
-        print("File could not be saved.")
+    # Error handling
+    except ValueError:
+        print("Please enter a valid number.")
+    except ZeroDivisionError:
+        print("GCD is 0, so LCM cannot be found.")
